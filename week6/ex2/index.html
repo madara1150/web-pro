@@ -128,7 +128,7 @@
                                         </div>
 
                                         <!-- >>>>>ไอคอนรูปตะกร้า <<<<<<,s----------------------------------------->
-                                        <div class="icon is-size-4" @click="cart.push(product)">
+                                        <div class="icon is-size-4" @click="addToCart(product)">
                                             <i class="fas fa-shopping-cart has-text-warning"></i>
                                         </div>
 
@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- Card element start here ------------------------------------------>
-                <div v-for="product in cart" class="card mb-4">
+                <div v-for="product,index in cart" class="card mb-4">
                     <div class="card-content p-0">
                         <div class="media">
                             <div class="media-left">
@@ -170,7 +170,7 @@
                                     </div>
                                     <div>
                                         <!-- icon รูปถังขยะ------------------------------------------- -->
-                                        <span class="icon mr-2" key="false">
+                                        <span class="icon mr-2" key="false" @click='removeFromCart(index)'>
                                             <i class="far fa-trash-alt"></i>
                                         </span>
                                     </div>
@@ -181,11 +181,11 @@
                 </div>
                 <div style="display: flex;justify-content: space-between;font-size: 1.25rem;">
                     <span class="has-text-weight-bold">Total</span>
-                    <span id="totalPrice">123</span>
+                    <span id="totalPrice">{{totalSum}}</span>
                 </div>
 
                 <!-- ปุ่ม Checkout ------------------------------------------------------------ -->
-                <a class="button is-warning mt-3" style="width: 100%;">Checkout</a>
+                <a class="button is-warning mt-3" style="width: 100%;" @click="goCheckout()">Checkout</a>
 
             </div>
         </div>
@@ -272,8 +272,52 @@
                     },
                 ],
                 cart: [],
-                show_modal: false
+                show_modal: false,
+                checked:false,
+                data_lo:''
             },
+
+            methods:{
+                addToCart(val){
+                    let madaraza = false;
+            for (let i = 0; i < this.cart.length; i++) {
+                if (val.title === this.cart[i].title) {
+                    this.cart[i].quantity += 1
+                    madaraza = true
+                }
+            }
+            if (!madaraza && this.checked == false) {
+                val.quantity += 1
+                this.cart.push(val)
+            }
+            if(this.checked){
+                val.quantity = 0
+                val.quantity += 1
+                this.cart.push(val)
+                this.checked  = false
+            }
+                },
+                removeFromCart(index){
+                    
+                    this.cart.splice(index,1)
+                    this.checked = true
+                    console.log(this.cart);
+                },
+                goCheckout(){
+                    let obj = this.cart
+                    const myJSON = JSON.stringify(obj);
+                    localStorage.setItem("cart", myJSON);
+                    location.href = "./checkout.html";
+                }
+            },
+            computed:{
+                totalSum(){
+                    return this.cart.reduce((sum, cart) => {
+                    return Number(sum) + Number(cart.price * cart.quantity)
+        }, 0);
+                }
+            },
+            
         })
     </script>
 
