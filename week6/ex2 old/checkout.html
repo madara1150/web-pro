@@ -30,13 +30,13 @@
                         ตัวอย่างที่มีให้ และใส่ราคารวม แทนที่ตัวอย่างราคารวมที่ให้มา (copy ที่ทำไว้จากหน้า shop มาก็ได้)
                     </p>
                     <hr>
-                    <p class="my-4"><b>ข้อ 2 </b>ผูก v-model ให้กับ input แต่ละตัวใน Form
-                        (สามารถกำหนดชื่อตัวแปรเองได้เลย)
+                    <p class="my-4"><b>ข้อ 2 </b>ผูก v-model ให้กับ input แต่ละตัวใน Form (สามารถกำหนดชื่อตัวแปรเองได้เลย)
                     </p>
                     <hr>
-                    <p class="my-4"><b>ข้อ 3 </b>ให้สร้าง <b>Watchers หรือ Computed</b>
-                        โดยเมื่อเลือกจังหวัด ให้แสดงอำเภอภายในจังหวัดนั้น
-                        และเมื่อเลือกอำเภอ จะแสดงเฉพาะตำบลภายในอำเภอและจังหวัดนั้น
+                    <p class="my-4"><b>ข้อ 3 </b>ให้สร้าง <b>Watchers</b> 
+                        ในการดักจับการเปลี่ยนแปลงของค่าของตัว Address 
+                        โดยเมื่อมีการพิมพ์ข้อความหรือเพิ่มข้อมูลใหม่ให้ทำการแสดงข้อความด้านใต้ textarea <b>ที่อยู่</b> ขึ้นคำว่า "กำลังพิมพ์" 
+                        <br/>โดยให้แสดงคำนี้ค้างไว้ต่อไปหลังจากเลิกพิมพ์เป็นเวลา 1000 milliseconds
                     </p>
                     <hr>
                     <p class="my-4"><b>ข้อ 4 </b> ลองกดปุ่ม Confirm Order จะมี modal แสดงขึ้นมา
@@ -59,6 +59,7 @@
 
             <div class="navbar-menu">
                 <div class="navbar-start">
+                    <a href="../ex1/index.html" class="navbar-item">Basic of VueJS 2</a>
                     <a href="./index.html" class="navbar-item">Shop from Vue</a>
                     <a href="./checkout.html" class="navbar-item">Checkout</a>
                 </div>
@@ -84,7 +85,7 @@
                         <div class="media">
                             <div class="media-left">
                                 <figure class="image is-96x96">
-                                    <img :src="val.image"
+                                    <img :src='val.image'
                                         alt="Placeholder image">
                                 </figure>
                             </div>
@@ -94,7 +95,7 @@
                                 <div style="display: flex;justify-content: space-between;">
                                     <div>
                                         <span class="is-6 has-text-danger">{{val.price}}</span>
-                                        <span>{{val.quantity}}</span>
+                                        <span>x{{val.quantity}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -145,159 +146,101 @@
             </div>
 
             <h1 class="is-size-4">Address Info</h1><br>
-
-
-
             <div class="columns">
                 <div class="column">
-                    <label class="label">จังหวัด</label>
-                    <div class="select">
-                        <select v-model="prov">
-                            <option v-for="item in province" :key="item.id" :value="item">
-                                {{ item.name_th }}
-                            </option>
-                        </select>
-                    </div>
+                    <label class="label">ที่อยู่</label>
+                    <textarea class="textarea" placeholder="e.g. บ้านเลขที่ 123 ลาดกระบัง ...." v-model="address"></textarea>
+                    <p>{{wait}}</p>
                 </div>
-                <div class="column">
-                    <label class="label">อำเภอ</label>
-                    <div class="select">
-                        <select v-model="amph">
-                            <option v-for="item in amphh" :key="item.id" :value="item">
-                                {{ item.name_th }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="column">
-                    <label class="label">ตำบล</label>
-                    <div class="select">
-                        <select v-model="tam" >
-                            <option v-for="item in tamm" :key="item.id" :value="item">
-                                {{ item.name_th }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <!-- click this button to open Order modal ----------------- -->
-                    <label class="label">Comfrim</label>
-                    <a @click="modal_confirm_order = !modal_confirm_order" class="button is-warning">Confirm Order</a>
-                </div>
-
             </div>
 
-            <!-- Modal ของตารางใบเสร็จ ------------------------------------------------------------------>
-            <div class="modal" v-bind:class="{'is-active':modal_confirm_order}">
-                <div class="modal-background" @click="modal_confirm_order = !modal_confirm_order"></div>
-                <div class="modal-card" style="max-width: 960px;width: 90%;">
-                    <section class="modal-card-body">
-                        ตัวอย่าง order
-                        <img src="./Table example.png">
-                        <hr>
-                        Order Table ของนักศึกษา
-                        <table id='order-table' style="width: 100%;" class="table is-bordered">
-                            <!-- ใส่ข้อมูลของ table ไว้ในนี้ -------------------------------------------->
-                            <tr>
-                                <th colspan = "4" class="has-text-centered">Order details</th>
-                            </tr>
-                            <tr>
-                                <th colspan = "2">ชื่อ:{{fname}} {{lname}}</th>
-                                <th colspan = "2">ที่อยู่:{{prov.name_th}} {{amph.name_th}} {{tam.name_th}}</th>
-                            </tr>
-                            <tr>
-                                <th class="has-text-centered" colspan = "4">รายการสินค้า</th>
-                            </tr>
-                            <tr>
-                                <th colspan="1">ชื่อสินค้า</th>
-                                <th colspan="1">ราคาต่อหน่วย</th>
-                                <th colspan="1">จำนวน</th>
-                                <th colspan="1">ราคารวม</th>
-                            </tr>
-                            <tr v-for="val in data_lo">
-                                <td colspan="1">{{val.title}}</td>
-                                <td colspan="1">{{val.price}}</td>
-                                <td colspan="1">{{val.quantity}}</td>
-                                <td colspan="1">{{val.price * val.quantity}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"> </td>
-                                <th colspan="1">ราคารวมทั้งหมด</th>
-                                <th colspan="1">{{totalSum}}</th>
-                            </tr>
-                        </table>
-                    </section>
-                </div>
+
+            <!-- click this button to open Order modal ----------------- -->
+            <a @click="modal_confirm_order = !modal_confirm_order" class="button is-warning">Confirm Order</a>
+
+        </div>
+
+        <!-- Modal ของตารางใบเสร็จ ------------------------------------------------------------------>
+        <div class="modal" v-bind:class="{'is-active':modal_confirm_order}">
+            <div class="modal-background" @click="modal_confirm_order = !modal_confirm_order"></div>
+            <div class="modal-card" style="max-width: 960px;width: 90%;">
+                <section class="modal-card-body">
+                    ตัวอย่าง order
+                    <img src="./Table example.png">
+                    <hr>
+                    Order Table ของนักศึกษา
+                    <table id='order-table' style="width: 100%;" class="table is-bordered">
+                        <!-- ใส่ข้อมูลของ table ไว้ในนี้ -------------------------------------------->
+                        <tr>
+                            <th colspan = "4" class="has-text-centered">Order details</th>
+                        </tr>
+                        <tr>
+                            <th colspan = "2">ชื่อ:{{fname}} {{lname}}</th>
+                            <th colspan = "2">ที่อยู่: {{address}}</th>
+                        </tr>
+                        <tr>
+                            <th class="has-text-centered" colspan = "4">รายการสินค้า</th>
+                        </tr>
+                        <tr>
+                            <th colspan="1">ชื่อสินค้า</th>
+                            <th colspan="1">ราคาต่อหน่วย</th>
+                            <th colspan="1">จำนวน</th>
+                            <th colspan="1">ราคารวม</th>
+                        </tr>
+                        <tr v-for="val in data_lo">
+                            <td colspan="1">{{val.title}}</td>
+                            <td colspan="1">{{val.price}}</td>
+                            <td colspan="1">{{val.quantity}}</td>
+                            <td colspan="1">{{val.price * val.quantity}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"> </td>
+                            <th colspan="1">ราคารวมทั้งหมด</th>
+                            <th colspan="1">{{totalSum}}</th>
+                        </tr>
+                    </table>
+                </section>
             </div>
         </div>
     </div>
-</body>
-        <!-- script ---------------------->
-        <script src="./data/amphures.js"></script>
-        <script src="./data/province.js"></script>
-        <script src="./data/tambons.js"></script>
-        <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-        <script>
-            var app = new Vue({
-                el: '#app',
-                data: {
-                    cart: [],
-                    modal_confirm_order: false,
-                    show_modal: false,
-                    order_detail: {},
-                    province: province, // ข้อมูลจังหวัด
-                    amphures: amphures, // ข้อมูลอำเภอ
-                    tambons: tambons, // ข้อมูลตำบล
-                    data_lo:'',
-                    fname:'',
-                    lname:'',
-                    tel:'',
-                    amph:'',
-                    prov:'',
-                    tam:'',
-                    madara1:'',
-                    madara2:'',
-                    madara3:''
-                },
-                created(){
+    <!-- script ---------------------->
+    <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                cart: [],
+                modal_confirm_order: false,
+                show_modal: false,
+                order_detail: {},
+                fname:'',
+                lname:'',
+                tel:'',
+                address:'',
+                wait: ""
+            },
+            created(){
                 let madara = localStorage.getItem("cart")
                 this.data_lo = JSON.parse(madara);
+                console.log();
             },
             computed:{
                 totalSum(){
                     return this.data_lo.reduce((sum, data_lo) => {
                     return Number(sum) + Number(data_lo.price * data_lo.quantity)
         }, 0);
-                },
-                amphh(){
-                    if(this.prov.id == 2){
-                        return this.amphures.filter(val=>{
-                        return val.province_id == 2
-                    })
-                    }else{
-                        return this.amphures.filter(val=>{
-                        return val.province_id == 1
-                    })
-                    }
-                    
-                },
-                tamm(){
-                        return this.tambons.filter(val=>{
-                        return val.amphure_id == this.amph.id})
-                        
-                        
-                    
                 }
-                
             },
-            methods:{
-
+            watch:{
+                address(val){
+                    this.wait = 'กำลังพิมพ์...'
+                    setTimeout(()=>{
+                        this.wait = ''
+                    },1000)
+                }
             }
-                
-            })
-
-        </script>
+        })
+    </script>
 
 </html>
